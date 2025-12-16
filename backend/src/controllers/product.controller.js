@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 
 export const createProduct = async (req, res) => {
@@ -59,7 +60,23 @@ export const getAllProducts = async (req, res) => {
 
 export const getSingleProduct = async (req, res) => {
   try {
-    return res.status(501).json({ message: "getSingleProduct not implemented yet" });
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Product id is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid product id" });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.json(product);
   } catch (error) {
     console.error("[controller] getSingleProduct error", error);
     return res.status(500).json({ message: "Internal server error" });
