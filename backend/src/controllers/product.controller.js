@@ -49,7 +49,8 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    return res.status(501).json({ message: "getAllProducts not implemented yet" });
+    const products = await Product.find({}).sort({ createdAt: -1 });
+    return res.json(products);
   } catch (error) {
     console.error("[controller] getAllProducts error", error);
     return res.status(500).json({ message: "Internal server error" });
